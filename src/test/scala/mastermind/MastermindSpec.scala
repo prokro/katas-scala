@@ -16,5 +16,9 @@ class MastermindSpec extends AnyFlatSpec with Matchers {
 
     evaluate(Combination(Blue, Red, Blue, Blue), Combination(Red, Blue, Blue, Blue)) should be(
       Hint(wellPlaced = 2, misplaced = 2))
+    evaluate(Combination(Blue, Blue, Red, Red), Combination(Red, Red, Blue, Blue)) should be(
+      Hint(wellPlaced = 0, misplaced = 4))
+    evaluate(Combination(Blue, Green, Yellow, Red), Combination(Blue, Purple, Red, Pink)) should be(
+      Hint(wellPlaced = 1, misplaced = 1))
   }
 }
