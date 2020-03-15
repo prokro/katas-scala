@@ -30,13 +30,11 @@ object Mastermind {
     val wellPlaced    = positions.filter(_.wellPlaced)
     val notWellPlaced = positions.filter(!_.wellPlaced)
 
-    val notWellPlacedSecrets = notWellPlaced.map(_.secretColor)
-    val notWellPlacedGuesses = notWellPlaced.map(_.guessedColor)
+    val remainingSecrets = notWellPlaced.map(_.secretColor)
+    val remainingGuesses = notWellPlaced.map(_.guessedColor)
 
-    val unusedSecrets = notWellPlacedGuesses.foldLeft(notWellPlacedSecrets) {
-      case (remainingSecrets, guess) => remainingSecrets.diff(List(guess))
-    }
+    val wrongGuesses = remainingGuesses.diff(remainingSecrets)
 
-    Hint(wellPlaced.size, notWellPlacedSecrets.size - unusedSecrets.size)
+    Hint(wellPlaced.size, remainingGuesses.size - wrongGuesses.size)
   }
 }
