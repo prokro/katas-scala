@@ -3,6 +3,7 @@ package mastermind
 object Mastermind {
 
   sealed trait Color
+
   case object Blue   extends Color
   case object Red    extends Color
   case object Yellow extends Color
@@ -16,11 +17,26 @@ object Mastermind {
 
   case class Hint(wellPlaced: Int, misplaced: Int)
 
+  case class Position(secretColor: Color, guessedColor: Color, wellPlaced: Boolean)
+
   def evaluate(secret: Combination, guess: Combination): Hint = {
-    val wellPlaced = secret.toList.zip(guess.toList).count {
-      case (secretColor, guessColor) => secretColor == guessColor
+    val zipped = secret.toList.zip(guess.toList)
+
+    val positions = zipped.map {
+      case (secretColor, guessedColor) =>
+        Position(secretColor, guessedColor, secretColor == guessedColor)
     }
-    val misplaced = 0
-    Hint(wellPlaced, misplaced)
+
+    val wellPlaced    = positions.filter(_.wellPlaced)
+    val notWellPlaced = positions.filter(!_.wellPlaced)
+
+    val notWellPlacedSecrets = notWellPlaced.map(_.secretColor)
+    val notWellPlacedGuesses = notWellPlaced.map(_.guessedColor)
+
+    val unusedSecrets = notWellPlacedGuesses.foldLeft(notWellPlacedSecrets) {
+      case (remainingSecrets, guess) => remainingSecrets.diff(List(guess))
+    }
+
+    Hint(wellPlaced.size, notWellPlacedSecrets.size - unusedSecrets.size)
   }
 }
